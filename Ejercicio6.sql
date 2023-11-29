@@ -31,5 +31,27 @@ AND EXTRACT(DAY FROM fecha_operacion) BETWEEN 2019 AND 2020
 /*AND EXTRACT(MONTH FROM fecha_operacion) BETWEEN 10 AND 12
 AND EXTRACT(YEAR FROM fecha_operacion) BETWEEN 2019 AND 2020;
 --EXTRACT(MONTH FROM fecha_operacion) IN (10,11,12);*/
-/*Selecciona el precio medio de las ventas de Parking en la provincia de Huelva para aquellas operaciones que se realizaran entre semana (de Lunes a Viernes).
+
+/*Selecciona los inmuebles que se han vendido en jaén y córdoba 
+del 15 de Enero al 15 de MArzo da igual el año*/
+SELECT i.*, o.*
+FROM inmueble i JOIN operacion o USING(id_inmueble)
+WHERE provincia IN ('Jaén', 'Córdoba')
+AND tipo_operacion = 'Venta'
+AND EXTRACT(MONTH FROM fecha_operacion)IN (1)
+AND EXTRACT (DAY FROM   fecha_operacion)BETWEEN 15 AND 31
+OR (provincia IN ('Jaén', 'Córdoba')
+AND tipo_operacion = 'Venta'
+AND EXTRACT(MONTH FROM fecha_operacion)IN (2))
+OR 
+(provincia IN ('Jaén', 'Córdoba')
+AND tipo_operacion = 'Venta'
+AND EXTRACT(MONTH FROM fecha_operacion)IN (3)
+AND EXTRACT (DAY FROM fecha_operacion)BETWEEN 1 AND 15);
+/*Selecciona el precio medio de las ventas de Parking en 
+la provincia de Huelva para aquellas operaciones que se 
+realizaran entre semana (de Lunes a Viernes).
 */
+
+
+
