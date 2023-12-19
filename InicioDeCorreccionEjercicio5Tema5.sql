@@ -1,3 +1,4 @@
+
 /*Seleccionar el nombre, apellidos y gasto total de aquellos clientes
 que gastaron menos que la media de gasto por cliente
 .*/
@@ -138,6 +139,37 @@ UNION
 	FROM beneficios_minimos bmin
 	GROUP BY bmin.desde, bmin.hasta
 ORDER BY beneficio_maximo DESC;
+
+
+--CORRECCION DE LUISMI 
+WITH rendimiento_por_trayecto AS (
+    SELECT s.ciudad, ll.ciudad,
+        ROUND(0.3 * SUM(precio * (1 -
+                (COALESCE(descuento,0)/100.0))),2) AS "rendimiento"
+    FROM vuelo JOIN reserva USING (id_vuelo)
+            JOIN aeropuerto s ON (desde = s.id_aeropuerto)
+            JOIN aeropuerto ll ON (hasta = ll.id_aeropuerto)
+    GROUP BY s.ciudad, ll.ciudad
+), rendimiento_maximo AS (
+    SELECT MAX(rendimiento) as "maximo"
+    FROM rendimiento_por_trayecto
+), rendimiento_minimo AS (
+    SELECT MIN(rendimiento) as "minimo"
+    FROM rendimiento_por_trayecto
+)
+SELECT *, 'max' as "valor"
+FROM rendimiento_por_trayecto
+WHERE rendimiento = (
+                        SELECT maximo
+                        FROM rendimiento_maximo
+                    )
+UNION
+SELECT *, 'min'
+FROM rendimiento_por_trayecto
+WHERE rendimiento = (
+                        SELECT minimo
+                        FROM rendimiento_minimo
+                    );
 /*
 Seleccionar el nombre y apellidos de los clientes que no han hecho ninguna reserva para un vuelo que salga en el tercer trimestre desde Sevilla.
 */
@@ -159,6 +191,18 @@ WITH ClientesSinReserva AS (
 SELECT  nombre,  apellido1, apellido2
 FROM ClientesSinReserva;
 
+--Correccion de luismi 
+SELECT DISTINCT nombre, apellido1, apellido2
+FROM cliente JOIN reserva USING (id_cliente)
+        --JOIN vuelo USING (id_vuelo)
+        --JOIN aeropuerto ON (desde = id_aeropuerto)
+WHERE id_cliente NOT IN (
+        SELECT id_cliente
+        FROM reserva JOIN vuelo USING (id_vuelo)
+            JOIN aeropuerto ON (desde = id_aeropuerto)
+        WHERE ciudad = 'Sevilla'
+          AND TO_CHAR(salida, 'Q') = '3'
+);
 /*Selecciona el nombre y apellidos de aquellos clientes cuyo gasto en reservas de vuelos con origen en España (Sevilla, Málaga, Madrid, Bilbao y Barcelona)
 ha sido superior a la media total de gasto de vuelos con origen fuera de España.
 */
@@ -199,5 +243,24 @@ FROM
     CROSS JOIN MediaGastoExtranjero mg
 WHERE
     gc.gasto > mg.media_gasto_extranjero;
+	
+	
+	--Ejercicio de clase 
+	/**Seleccionar el nombre, apellidos y número de vuelos por aeropuerto de
+salida, 
+para el cliente que más vuelos de salida ha usado en cada aeropuerto.*/
 
-
+SELECT c.nombre, apellido1, apellido2, a.ciudad,
+        count(*) as "cantidad"
+FROM cliente c JOIN reserva USING (id_cliente)
+        JOIN vuelo v1 USING (id_vuelo)
+        JOIN aeropuerto a ON (desde = id_aeropuerto)
+GROUP BY c.nombre, apellido1, apellido2, a.ciudad,
+            desde
+HAVING COUNT(*) >= ALL (
+                        SELECT COUNT(*)
+                        FROM vuelo v2 JOIN
+                         reserva USING (id_vuelo)
+                        WHERE v1.desde = v2.desde
+                        GROUP BY id_cliente
+                    );
