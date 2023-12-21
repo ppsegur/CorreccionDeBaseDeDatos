@@ -3,7 +3,7 @@
 que gastaron menos que la media de gasto por cliente
 .*/
 --Opción sin WITH
-ELECT nombre, apellido1, apellido2,
+SELECT nombre, apellido1, apellido2,
         SUM(precio * 1 -
                        (COALESCE(descuento,0)
                             / 100.0)) as "gasto"
