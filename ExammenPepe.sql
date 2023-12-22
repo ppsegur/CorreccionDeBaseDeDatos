@@ -27,7 +27,7 @@ AND fecha_operacion > CURRENT_TIMESTAMP;
 AND fecha_operacion IS NOT NULL;
 
 --Consulta 4 
-SELECT ROUND(COALESCE(precio-(precio_final))*precio/100
+SELECT ROUND(COALESCE(precio-(precio_final))*precio/100)
 FROM inmueble JOIN operacion USING (id_inmueble)
 WHERE tipo_operacion = 'Alquiler'
 AND TO_CHAR(fecha_operacion,'DD/MM') >'21/03'

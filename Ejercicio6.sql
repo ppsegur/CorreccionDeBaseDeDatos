@@ -141,8 +141,13 @@ WHERE i.tipo_operacion = 'Alquiler'
 GROUP BY v.nombre, TO_CHAR(o.fecha_operacion, 'Day');
 	
 	--Correccioón de luismi 
-SELECT v.nombre, EXTRACT(isodow FROM fecha_operacion),
+SELECT v.nombre, EXTRACT(isodow FROM fecha_operacion) as "dia",COUNT(*)
+(
+    SELECT COUNT(*)
+    FROM inmueble JOIN operacion USING(id_inmueble )
+)
 	FROM vendedor v JOIN operacion USING(id_vendedor)
 		JOIN inmueble USING(id_inmueble)
 	WHERE tipo_operacion = 'Alquiler'
 	AND EXTRACT(isodow FROM fecha_operacion) != 7
+    GROUP BY v.nombre, dia;
