@@ -115,3 +115,63 @@ CREATE TABLE nota(
 );
 
 --el tipo de dato de las claves externas tiene que ser compatible(igual) al de las claves primarias.
+
+--17 de enero de 2024
+-- Manipulaciión de datos
+--Insertar un dato en una tabla
+INSERT INTO producto VALUES (1, 'Queso', 9.99);
+--Insertar varios datos en una misma sentencia 
+INSERT INTO productos (num_producto, nombre, precio) VALUES
+(1, 'Queso', 9.99),
+(2, 'Pan', 0.99),
+(3, 'Leche', 1.25);
+
+-- Si le damos el valor CURRENTTIMESTAMP se guarda la fecha del dia actual
+INSERT INTO productos (num_producto, nombre, precio) VALUES
+(1, 'Queso', 9.99),
+(2, 'Pan', 0.99),
+(3, 'Leche', 1.25);
+DROP TABLE IF EXISTS producto;
+CREATE TABLE producto(
+	num_producto  SERIAL,
+	nombre        TEXT,
+	precio    NUMERIC(4,2),
+	CONSTRAINT pk_producto PRIMARY KEY(num_producto)
+);
+INSERT INTO producto (nombre, precio) VALUES
+	('Filete de pollo', 5.69),
+	('Mango',0.50),
+	('Sandia', 6.23);
+	
+	SELECT * FROM producto;
+	
+	ALTER SEQUENCE producto_num_producto_seq RESTART WITH 1000 ;--INCREMENT BY 10(Para que en vez de uno en uno vaya de diez en diez);
+	--Resetea todas las secuencias para que el proximo insert empieze por el número de 1000
+	INSERT INTO producto(nombre,precio)  VALUES ('Melva',4);
+	INSERT INTO producto(nombre,precio)  VALUES ('Melon',3.2);
+	INSERT INTO producto(nombre,precio)  VALUES ('Chucherias',0.20);
+
+
+CREATE TABLE temperatura_jaen(
+	fecha DATE,
+	estacion TEXT,
+	provincia TEXT,
+	temperatura_media  NUMERIC,
+	CONSTRAINT pk_temperatura_jaen PRIMARY KEY(fecha, estacion)
+);
+--Para insertar datos de una tabla en otra 
+INSERT INTO temperatura_jaen 
+SELECT fecha, estacion, provincia, temperatura_media
+FROM climatologia 
+WHERE provincia = 'Jaén';
+
+--Para actualizar la base de datos 
+UPDATE producto SET precio = precio*2;
+UPDATE producto SET precio = 10 WHERE precio = 5;
+
+ALTER TABLE producto ADD COLUMN disponible boolean;
+UPDATE producto SET disponible = true;
+UPDATE producto SET nombre = 'Melon agridulce' , precio = 5.2 WHERE num_producto = 1001;
+UPDATE producto SET precio = precio-(precio * (10.0/100)) WHERE precio > 10;
+ALTER TABLE nombre_de_la_tabla DROP COLUMN nombre_de_la_columna;--Para borrar una columna 
+--Para borrar los datos de una columna 
