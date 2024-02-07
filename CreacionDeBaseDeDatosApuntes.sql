@@ -173,5 +173,15 @@ ALTER TABLE producto ADD COLUMN disponible boolean;
 UPDATE producto SET disponible = true;
 UPDATE producto SET nombre = 'Melon agridulce' , precio = 5.2 WHERE num_producto = 1001;
 UPDATE producto SET precio = precio-(precio * (10.0/100)) WHERE precio > 10;
-ALTER TABLE nombre_de_la_tabla DROP COLUMN nombre_de_la_columna;--Para borrar una columna 
---Para borrar los datos de una columna 
+ALTER TABLE nombre_de_la_tabla DROP COLUMN nombre_de_la_columna;--Para borrar una columna 		
+
+
+
+--19/01/2024
+--Trasacciones 
+BEGIN 
+DELETE FROM producto  WHERE nombre ILIKE '%MacbookPro%'
+--INSERT INTO producto(nombre,precio) VALUES ('zumo', 1.2) 
+COMMIT;
+
+ROLLBACK;-- Si utilizas RollBack en una trascción nos la borrar.                        
